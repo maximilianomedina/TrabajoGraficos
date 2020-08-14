@@ -1,0 +1,229 @@
+---
+title: "Guia_Big_Data_Graficos"
+author: "Maximiliano Medina"
+date: "09-08-2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+```{r}
+install.packages("ggplot2")
+library(ggplot2)
+```
+
+
+```{r}
+install.packages("gdata")
+library(gdata)
+```
+
+
+
+
+
+```{r}
+summary.data.frame(fullDatos)
+```
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(fullDatos)
+```
+```{r}
+library(rvest)
+```
+
+```{r}
+library(ggplot2)
+```
+
+
+
+```{r}
+levels(fullDatos$aniousuarioyapo)
+fullDatos$aniousuarioyapo <- factor(fullDatos$aniousuarioyapo)
+fullDatos$aniousuarioyapo
+conteoAnios <- list(table(fullDatos$aniousuarioyapo))
+
+levels(fullDatos$precio)
+fullDatos$precio <- factor(fullDatos$precio)
+```
+
+
+
+
+
+```{r}
+library(xml2)
+```
+
+
+#Ejercicio1
+#para el caso del filtro buscaremos lograr encontrar las 5 comunas que más publicaciones suben a 
+#Yapo.cl desde la región Metropolitana, para eso hare el conteo a traves de un table que nos permite contar las variables y un sort que nos permitira ordenarlas 
+
+```{r}
+levels(fullDatos$comuna)
+fullDatos$comuna <- factor(fullDatos$comuna)
+
+conteotablaC <- table(fullDatos$comuna)
+TopComuna <- (sort((conteotabla), decreasing = T))
+
+
+comon <- as.data.frame(TopComuna)
+levels(comon$Freq)
+comon$Freq <- factor(comon$Freq)
+comon$Freq
+
+levels(comon$Var1)
+comon$Var1 <- factor(comon$Var1)
+comon$Var1
+
+Frec <- as.character.numeric_version(comon$Freq)
+
+
+
+```
+#anteriormente se ocuparon funciones que nos ayudaran a filtrar la info que nos lanza los datos de las comunas que forman parte del estudio, pero también hay otro filtro que nos ayuda a descifrar cuales son las comunas con más anuncios realizados en yapo. Las cuales serían Santiago, Maipú, Pudahuel, Ñuñoa y El Bosque respectivamente.
+
+```{r}
+levels(fullDatos$aniousuarioyapo)
+fullDatos$aniousuarioyapo <- factor(fullDatos$aniousuarioyapo)
+
+conteotablaA <- table(fullDatos$aniousuarioyapo)
+TopAnio <- (conteotabla)
+
+
+muchosAnios <- as.data.frame(TopAnio)
+levels(muchosAnios$Freq)
+muchosAnios$Freq <- factor(muchosAnios$Freq)
+muchosAnios$Freq
+
+levels(muchosAnios$Var1)
+muchosAnios$Var1 <- factor(muchosAnios$Var1)
+P_por_A <- muchosAnios$Var1
+
+Frecuente <- as.character.numeric_version(muchosAnios$Freq)
+
+Frecuente
+```
+#este filtro nos permite descrubrir desde que años estamos sacando la información desde Yapo. Lo que también nos permite descubrir que año ha sido el que más publicaciones ha tenido.
+
+
+
+
+
+#Ejercicio2
+#se busca realizar un estudio y un informe de los datos gracias a visualizaciones en forma de graficos, en los que encontraremos diversa información la cual sera extraida y explicada luego en un parrafo explicativo.
+```{r}
+levels(comon$Var1)
+comon$Var1 <- factor(comon$Var1)
+comon$Var1
+
+
+Comunas <- comon$Var1
+
+ggplot(comon, aes(x=Frec , fill=Comunas))+
+  scale_x_discrete(name = "Comunas")+
+  scale_y_continuous(name = "Frecuencia", breaks = seq(0,0,3), limits = c(0,15))+
+  ggtitle(label = "Anuncios/Comuna")+
+ geom_bar()+
+  coord_flip()
+
+```
+#para este primer gráfico se busca ver cuantas veces se repiten las publicaciones de anuncios por comuna, en el gráfico podemos encontrar que el valor de publicación por comuna que mas se repite en el valor de 1, con comunas como Cerro Navia, Colina, Conchalí, Isla de Maipo, La Granja, Lampa, Padre Hurtado, Paine, Quilicura, San Joaquín y San José de Maipo. mientras que para los valores que menos se repiten tambien encontramos que son los valores que mas publicaciones por comuna tienen, los cuales serían las comunas de Santiago (con 26 publiacaiones), Maipu y Pudahuel (las dos con 11 publicaciones por comuna). Lo que nos permite ver que hay comunas en la Región Metropolitana donde las personas ocupan muy poco la pagina de Yapo para anunciar sus productos o servicios, mientras que otras en comparación tienen muchas publicaiones, lo que se puede concluir en una centralización de los datos.
+
+
+```{r}
+Años <- fullDatos$aniousuarioyapo
+
+
+ggplot(fullDatos, aes(x=fullDatos$aniousuarioyapo , fill=Años))+
+  scale_x_discrete(name = "Años")+
+  scale_y_continuous(name = "Frecuencia", breaks = seq(0,40,2), limits = c(0,40))+
+   ggtitle(label = "Anuncios por comuna")+ 
+     coord_flip()+
+  geom_bar()
+
+```
+#para este gráfico podemos ver que la disperción de los dipersión de los datos es baja con respecto a la dispersición de los datos de las comunas, lo cual tambien puede significar que no existe como tal un año donde las personas prefieran publicar sus anuncios, pero tambien podemos percibir que la cantidad de datos para un año que aun no termina como lo es el 2020, se ve influenciada por la pandemia a raíz del corona virus, ya que propicia las compras y ventas por internet.
+
+
+
+
+
+
+
+#Ejercicio3
+#los datos "NA" aparecen en el data.fram "fullDatos", por que existen condiciones creadas a traves de funciones que las podemos encontrar en el siguiente conjunto de funciones:
+sacandoPrecio <- function(htmlSeg){
+  nodoBread <- html_nodes(htmlSeg, ".offer")
+  if(length(nodoBread)>0){
+    precio <- html_text(nodoBread)
+    precio <- gsub("\\t","",precio)
+    precio <- gsub("\\n","",precio)
+    precio <- gsub("\\$","",precio)
+    precio <- gsub("[.]","",precio)
+    precio <- as.numeric(precio)
+  }else{
+    precio = NA
+  }
+  return(precio)
+#El valor "NA" es condicionado debido a la función "gsub", donde se comienza a limpiar la variable precio de posibles valores que podriamos encontrar, las cuales serían los valores de "t", "n", "$" y "."; mientras que para los valores igual a 0 nos dará un valor de "NA", ya que se puso un length para contar a la variable nodoBread y dando la condición que tiene que ser mayor a 0 y por otro lado la función "else" le da la condicion a para que el precio sea igual a "NA".
+
+
+#Por otro lado, los valores "NA" también aparecen en la varible "TipoNegocio" debido al siguiente conjunto de funciones:
+obtenerTipoNegocio <- function(htmlSeg){
+  nodoBread <- html_nodes(htmlSeg, ".details")
+  nodoBread <- html_nodes(nodoBread, "table")
+  tabla <- html_table(nodoBread)[[1]]
+  subsettn <- unlist(subset(tabla, X1 == 'Tipo')[2])
+  if(length(subsettn)>0){
+    return(subsettn)
+  }else{
+    return(NA)
+  }
+}
+#Acá podemos encontrar la función "subset" que nos sirve para dar condicionalidad a variables sin necesidad de corchetes, lo cual permite generar una condicionalidad más simple. Esta función fue ocupada para darle valor "NA" a las veces que no se ocupa este valor, ya que en la página Yapo no es uno de los parametros obligatorios al momento de publicar un anuncio en esta página web, lo que para muchos casos no se ocupa este parametro.
+
+
+
+
+
+
+
+
+
+
+
+
+
+#Ejercicio4
+#Primero buscamos cargar los datos de un archivo "CSV" para que nuestro R reconozca el tipo de archivo, que y no dañe nuestro documento al momento de guardar, para eso podemos ocuar un "read.csv" donde se pondra el archivo ocupado para cargar el formato "csv", al momento de ocupar "read.csv" debemos tomar el enlace de la carpeta donde esta el el archivo csv y cambiar los backslash por slash normales, ocupar sep para darle una separación a los datos del data.frame ocupados para este estudio y estimar un encoding de UT8 que es el más utilizado, lo que permitiría un mejor uso de los datos, desde otras computadoras. La función de carga debe ser escrita de la siguiente forma:
+#ejemplo
+```{r}
+#dataf<-read.csv("C:/Users/hp/Desktop/para clonar/(Nombre Archivo CSV)",sep = "-", encoding = "UTF8")
+```
+#luego de cargar los datos "csv", buscamos la forma de guardar, que será simple gracias a la función "write.csv", ya que sólo debemos escribir el nombre de la data que queremos cargar y el nombre del archivo que le pondremos al nuevo CSV donde estarán los datos de la data.
+```{r}
+write.csv(fullDatos , "Trabajo_Yapo.csv")
+
+```
+
+
